@@ -4,7 +4,11 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
-	<key>CFBundleDisplayName</key>
+	<key>NSCameraUsageDescription</key>
+    <string>Allow permission to use your camera for the camera button</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Allow permission to use your microphone for realtime imagery on the camera button</string>
+    <key>CFBundleDisplayName</key>
 	<string>Camera Button</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
