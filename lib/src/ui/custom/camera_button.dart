@@ -1,63 +1,73 @@
 part of '../home_screen.dart';
 
-class CameraButtonDecorator extends StatefulWidget {
-  const CameraButtonDecorator({Key? key}) : super(key: key);
+class CameraButton extends StatefulWidget {
+  const CameraButton({Key? key}) : super(key: key);
 
   @override
-  State<CameraButtonDecorator> createState() => _CameraButtonDecoratorState();
+  State<CameraButton> createState() => _CameraButtonState();
 }
 
-class _CameraButtonDecoratorState extends State<CameraButtonDecorator> {
+class _CameraButtonState extends State<CameraButton> {
+  late final CameraController controller;
+
+  bool initialized = false;
+
+  @override
+  void dispose() {
+    super.dispose();
+    controller.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initializeCamera();
+  }
+
+  Future<void> initializeCamera() async {
+    try {
+      final List<CameraDescription> cameraDescriptions =
+          await availableCameras();
+
+      print('camera descriptions: $cameraDescriptions');
+
+      controller = CameraController(
+        cameraDescriptions[0],
+        ResolutionPreset.max,
+        enableAudio: true,
+        imageFormatGroup: ImageFormatGroup.unknown,
+      );
+      await controller.initialize();
+      if (mounted) {
+        setState(() {
+          initialized = true;
+        });
+      }
+    } catch (e, stacktrace) {
+      if (e is CameraException) {
+        debugPrint(
+          'camera exception occurred: ${e.code} ${e.description}, stacktrace: $stacktrace',
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width * (5 / 7),
-      height: 90.h,
-      decoration: BoxDecoration(
-        color: Colors.grey.withOpacity(0.4),
+    return Opacity(
+      opacity: 0.6,
+      child: ClipRRect(
         borderRadius: BorderRadius.circular(50),
-        gradient: RadialGradient(
-          colors: [
-            Colors.white.withOpacity(0.8),
-            Colors.white.withOpacity(0.2),
-          ],
-          stops: const [0.0, 1.0],
-          center: Alignment.center,
-          radius: 1.0,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.white.withOpacity(0.8),
-            spreadRadius: 4,
-            blurRadius: 1,
-            offset: const Offset(0, 0),
-          ),
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(50),
-          color: Colors.red,
+        child: SizedBox(
+          child: initialized
+              ? CameraPreview(
+                  controller,
+                )
+              : Container(
+                  color: Colors.black45,
+                ),
         ),
       ),
     );
   }
 }
-
-
-
-class CameraButton extends StatelessWidget {
-  const CameraButton({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
-}
-
