@@ -22,6 +22,7 @@ class _CameraButtonDecoratorState extends State<CameraButtonDecorator> {
 
   @override
   Widget build(BuildContext context) {
+    const Duration animationDuration = Duration(milliseconds: 130);
     return InkWell(
       onTapDown: (details) => setState(() {
         pressed = true;
@@ -31,11 +32,15 @@ class _CameraButtonDecoratorState extends State<CameraButtonDecorator> {
       }),
       onTap: setPressed,
       borderRadius: BorderRadius.circular(50),
-      child: PhysicalModel(
+      child: AnimatedPhysicalModel(
+        duration: animationDuration,
         color: Colors.transparent,
-        elevation: pressed ? 0 : 20,
+        elevation: pressed ? 0 : 30,
         borderRadius: BorderRadius.circular(50),
-        child: Container(
+        shape: BoxShape.rectangle,
+        shadowColor: Colors.black.withOpacity(0.2),
+        child: AnimatedContainer(
+          duration: animationDuration,
           width: MediaQuery.of(context).size.width * (5 / 7),
           height: 120.h,
           decoration: BoxDecoration(
@@ -60,9 +65,9 @@ class _CameraButtonDecoratorState extends State<CameraButtonDecorator> {
               if (!pressed)
                 BoxShadow(
                   color: Colors.black.withOpacity(0.2),
-                  spreadRadius: 4,
-                  blurRadius: 7,
-                  offset: const Offset(0, 2),
+                  spreadRadius: 6,
+                  blurRadius: 15,
+                  offset: const Offset(0, 4),
                 ),
             ],
           ),

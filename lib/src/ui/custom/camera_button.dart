@@ -8,7 +8,7 @@ class CameraButton extends StatefulWidget {
 }
 
 class _CameraButtonState extends State<CameraButton> {
-  late final CameraController controller;
+  late CameraController controller;
 
   bool initialized = false;
 
@@ -26,13 +26,15 @@ class _CameraButtonState extends State<CameraButton> {
 
   Future<void> initializeCamera() async {
     try {
-      final List<CameraDescription> cameraDescriptions =
-          await availableCameras();
-
-      print('camera descriptions: $cameraDescriptions');
-
+      await CameraUtils.fetchCameraDescriptions();
+      final List<CameraDescription> cameraDescriptions = List.from(
+        CameraUtils.cameraDescriptions,
+      );
       controller = CameraController(
-        cameraDescriptions[0],
+        cameraDescriptions.firstWhere(
+          (element) => element.lensDirection == CameraLensDirection.front,
+          orElse: () => cameraDescriptions[0],
+        ),
         ResolutionPreset.max,
         enableAudio: true,
         imageFormatGroup: ImageFormatGroup.unknown,
@@ -54,20 +56,31 @@ class _CameraButtonState extends State<CameraButton> {
 
   @override
   Widget build(BuildContext context) {
-    return Opacity(
-      opacity: 0.6,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(50),
-        child: SizedBox(
-          child: initialized
-              ? CameraPreview(
-                  controller,
-                )
-              : Container(
-                  color: Colors.black45,
-                ),
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Opacity(
+          opacity: 0.65,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(50),
+            child: SizedBox(
+              child: initialized
+                  ? controller.buildPreview()
+                  : Container(
+                      color: Colors.white,
+                    ),
+            ),
+          ),
         ),
-      ),
+        Text(
+          'Button',
+          style: TextStyle(
+            fontSize: 22.sp,
+            color: Colors.grey[500]?.withOpacity(0.95),
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
     );
   }
 }

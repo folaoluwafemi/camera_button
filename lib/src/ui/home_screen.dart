@@ -1,5 +1,7 @@
 import 'package:camera/camera.dart';
+import 'package:camera_button/src/utils/camera_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 part 'custom/camera_button.dart';
@@ -16,6 +18,7 @@ class HomeScreen extends StatelessWidget {
         toolbarHeight: 0,
         elevation: 0,
         backgroundColor: Colors.transparent,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       backgroundColor: Colors.white,
       body: const Center(
